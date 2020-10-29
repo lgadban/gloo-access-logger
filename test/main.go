@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	v2 "github.com/envoyproxy/go-control-plane/envoy/data/accesslog/v2"
@@ -11,14 +10,13 @@ import (
 )
 
 func main() {
-	fmt.Println("Hello, world")
-
 	conn, err := grpc.Dial("localhost:8083", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
 
+	log.Println("connected...")
 	alsClient := alsv2.NewAccessLogServiceClient(conn)
 	stream, err := alsClient.StreamAccessLogs(context.Background())
 	if err != nil {
@@ -48,11 +46,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("err sending accessLog: %v", err)
 	}
+	log.Println("message sent")
 }
-
-// checkResponse, err := extAuthClient.Check(context.Background(), &checkRequest)
-// if err != nil {
-// 	log.Fatalf("could not CheckRequest: %v", err)
-// }
-
-// log.Printf("successfully checked, response: %v\n", checkResponse.GetHttpResponse())
